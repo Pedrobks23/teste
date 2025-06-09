@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Mesas</title>
+<style>
+body { font-family: sans-serif; margin: 20px; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #ccc; padding: 4px; }
+</style>
+</head>
+<body>
+<h1>Mesas</h1>
+<table id="lista"></table>
+<h2>Nova Mesa</h2>
+<form id="mesaForm">
+  <label>Capacidade: <input type="number" id="capacidade" required></label>
+  <label>Localização: <input type="text" id="localizacao"></label>
+  <button type="submit">Salvar</button>
+</form>
+<p id="msg"></p>
+<script>
+async function carregar() {
+  const res = await fetch('/mesas');
+  const dados = await res.json();
+  const tabela = document.getElementById('lista');
+  tabela.innerHTML = '<tr><th>ID</th><th>Capacidade</th><th>Localização</th></tr>' +
+    dados.map(m => `<tr><td>${m.id}</td><td>${m.capacidade}</td><td>${m.localizacao}</td></tr>`).join('');
+}
+carregar();
+
+document.getElementById('mesaForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const body = {
+    capacidade: parseInt(document.getElementById('capacidade').value, 10),
+    localizacao: document.getElementById('localizacao').value
+  };
+  const res = await fetch('/mesas', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const msg = document.getElementById('msg');
+  if (res.ok) {
+    msg.textContent = 'Mesa cadastrada';
+    carregar();
+  } else {
+    const data = await res.json();
+    msg.textContent = data.error || 'Erro';
+  }
+});
+</script>
+<p><a href="index.html">Nova Reserva</a></p>
+</body>
+</html>
