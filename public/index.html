@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Reservar Mesa</title>
+<style>
+body { font-family: sans-serif; margin: 20px; }
+label { display: block; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h1>Nova Reserva</h1>
+<form id="reservaForm">
+  <label>Cliente ID: <input type="number" id="cliente" required></label>
+  <label>Mesa ID: <input type="number" id="mesa" required></label>
+  <label>Data: <input type="date" id="data" required></label>
+  <label>Hora: <input type="time" id="hora" required></label>
+  <button type="submit">Reservar</button>
+</form>
+<p id="msg"></p>
+<script>
+document.getElementById('reservaForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const body = {
+    cliente_id: parseInt(document.getElementById('cliente').value, 10),
+    mesa_id: parseInt(document.getElementById('mesa').value, 10),
+    data: document.getElementById('data').value,
+    hora: document.getElementById('hora').value
+  };
+  const res = await fetch('/reservas', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const msg = document.getElementById('msg');
+  if (res.ok) {
+    msg.textContent = 'Reserva criada com sucesso!';
+  } else {
+    const data = await res.json();
+    msg.textContent = data.error || 'Erro ao criar reserva';
+  }
+});
+</script>
+<p><a href="clientes.html">Clientes</a> | <a href="mesas.html">Mesas</a> | <a href="reservas.html">Reservas</a></p>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Reservas</title>
+<style>
+body { font-family: sans-serif; margin: 20px; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #ccc; padding: 4px; }
+</style>
+</head>
+<body>
+<h1>Reservas</h1>
+<table id="lista"></table>
+<script>
+async function carregar() {
+  const res = await fetch('/reservas');
+  const dados = await res.json();
+  const tabela = document.getElementById('lista');
+  tabela.innerHTML = '<tr><th>ID</th><th>Cliente</th><th>Mesa</th><th>Data</th><th>Hora</th></tr>' +
+    dados.map(r => `<tr><td>${r.id}</td><td>${r.cliente}</td><td>${r.mesa}</td><td>${r.data}</td><td>${r.hora}</td></tr>`).join('');
+}
+carregar();
+</script>
+<p><a href="index.html">Nova Reserva</a></p>
+</body>
+</html>
